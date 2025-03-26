@@ -1,4 +1,5 @@
 name: Codeclimate
+name: Codeclimate
 
 on:
   push:
@@ -13,10 +14,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
+      - name: Install dependencies
+        run: npm install
       - name: Run tests with coverage
         run: npm run test -- --coverage
+      - name: Install Code Climate CLI
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-reporter
+          chmod +x ./cc-reporter
       - name: Upload coverage to Codeclimate
-        uses: codeclimate/codeclimate-github-action@v1
+        run: ./cc-reporter after-build --coverage-input-type lcov
         env:
           CODECLIMATE_REPO_TOKEN: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
-
